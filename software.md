@@ -82,3 +82,17 @@ The `torch` package may require a relatively up to date version of R and RStudio
 ```r
 install.packages("torch")
 ```
+
+### Keras and Tensorflow for deep learning
+
+Keras is a front to Tensorflow. These do not run natively in R and instead run in a Python virtual environment accessible through R.
+While installation issues may occur, the normal procedure for installing everything, including the Python virtual environment, is as follows:
+
+```r
+install.packages("keras")
+library(keras)
+install_keras()
+```
+
+In case of installation problems, an RStudio server session running in a Docker container can be used, which is accessible by clicking this button.
+[![Binder](https://notebooks.gesis.org/binder/badge_logo.svg)](https://notebooks.gesis.org/binder/v2/gh/mark-andrews/intro_bda_qub/HEAD?urlpath=rstudio)
