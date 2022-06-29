@@ -66,3 +66,50 @@ roc_df <- generateThreshVsPerfData(p,
                                    measures = list(fpr, tpr))
 plotROCCurves(roc_df)
 performance(p, measures = auc)
+
+
+# Get the glm model -------------------------------------------------------
+
+logReg_trained_M <- getLearnerModel(logReg_trained)
+
+
+# Get mnist data ----------------------------------------------------------
+
+mnist_df <- readRDS('data/mnist.Rds')
+
+# Read in some utils etc --------------------------------------------------
+
+source("https://raw.githubusercontent.com/mark-andrews/imdl03/main/scripts/mnist_utils.R")
+
+
+# Plot sample -------------------------------------------------------------
+
+plot_mnist(mnist_df %>% sample_n(16))
+plot_mnist(mnist_df %>% sample_n(16), rm_label = T)
+
+
+# Make task, learner and then train it ------------------------------------
+
+mnistTask <- makeClassifTask(data = train_df, 
+                             target = 'target')
+mnistLogReg <- makeLearner('classif.logreg', predict.type = 'prob')
+mnistLogReg_trained <- train(mnistLogReg, mnistTask)
+
+
+# Evaluate performance ----------------------------------------------------
+
+p <- predict(mnistLogReg_trained, newdata = test_df)
+calculateConfusionMatrix(p)
+calculateROCMeasures(p)
+
+
+# Cross validation --------------------------------------------------------
+
+kfold_cv <- makeResampleDesc(method = 'CV', iters = 10, stratify = TRUE)
+
+mnistKfold <- resample(mnistLogReg,
+                       mnistTask,
+                       resampling = kfold_cv,
+                       measures = list(acc, mmce, ppv, tpr, f1, auc))
+
+mnistKfold$aggr
