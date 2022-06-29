@@ -34,3 +34,12 @@ logReg_trained <- train(logReg, affairsTask)
 p <- predict(logReg_trained, newdata = training_df)
 calculateConfusionMatrix(p)
 calculateROCMeasures(p)
+
+# recall, aka TPR aka sensivity
+recall <- measureTPR(p$data$truth, p$data$response, positive = 'yes')
+# precision, ppv
+precision <- measurePPV(p$data$truth, p$data$response, positive = 'yes')
+
+# F1
+1/mean(1/c(recall, precision))
+measureF1(p$data$truth, p$data$response, positive = 'yes')
