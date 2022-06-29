@@ -169,3 +169,16 @@ svm_trained <- train(svmLearner, spamTask)
 p <- predict(svm_trained, newdata = spam)
 calculateConfusionMatrix(p)
 calculateROCMeasures(p)
+
+
+kfold_cv <- makeResampleDesc(method = 'RepCV',
+                             folds = 10,
+                             reps = 3,
+                             stratify = T)
+
+spamCV <- resample(learner = svmLearner,
+                 task = spamTask,
+                 resampling = kfold_cv,
+                 measures = list(acc, mmce, tpr, ppv, f1))
+
+spamCV$aggr
