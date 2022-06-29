@@ -25,6 +25,7 @@ affairsTask <- makeClassifTask(data = training_df,
 
 logReg <- makeLearner("classif.logreg", predict.type = 'prob')
 
+
 # train it
 logReg_trained <- train(logReg, affairsTask)
 
@@ -43,3 +44,25 @@ precision <- measurePPV(p$data$truth, p$data$response, positive = 'yes')
 # F1
 1/mean(1/c(recall, precision))
 measureF1(p$data$truth, p$data$response, positive = 'yes')
+
+# Cross validation --------------------------------------------------------
+
+kfold_cv <- makeResampleDesc(method = 'RepCV',
+                             folds = 10,
+                             reps = 10,
+                             stratify = TRUE)
+
+logRegKfold <- resample(logReg,
+                        affairsTask,
+                        resampling = kfold_cv,
+                        measures = list(acc, mmce, tpr, ppv, f1))
+
+logRegKfold$aggr
+
+
+# ROC Curve ---------------------------------------------------------------
+
+roc_df <- generateThreshVsPerfData(p, 
+                                   measures = list(fpr, tpr))
+plotROCCurves(roc_df)
+performance(p, measures = auc)
