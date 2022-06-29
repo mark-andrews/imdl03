@@ -113,3 +113,59 @@ mnistKfold <- resample(mnistLogReg,
                        measures = list(acc, mmce, ppv, tpr, f1, auc))
 
 mnistKfold$aggr
+
+# Naive Bayes -------------------------------------------------------------
+
+library(mlbench)
+data("HouseVotes84")
+
+
+
+# Set up naive Bayes ------------------------------------------------------
+
+votesTask <- makeClassifTask(data = HouseVotes84, target = 'Class')
+nbLearner <- makeLearner('classif.naiveBayes')
+nbLearner_train <- train(nbLearner, votesTask)
+
+
+# Evaluate ----------------------------------------------------------------
+
+p <- predict(nbLearner_train, newdata = HouseVotes84)
+calculateConfusionMatrix(p)
+calculateROCMeasures(p)
+
+
+# Cross validation --------------------------------------------------------
+
+kfold_cv <- makeResampleDesc(method = 'RepCV',
+                             folds = 10,
+                             reps = 10,
+                             stratify = T)
+
+nbCV <- resample(learner = nbLearner,
+                 task = votesTask,
+                 resampling = kfold_cv,
+                 measures = list(acc, mmce, tpr, ppv, f1))
+
+nbCV$aggr
+
+
+# Support vector machines -------------------------------------------------
+
+library(kernlab)
+data(spam)
+
+table(spam$type)
+
+
+# svm ---------------------------------------------------------------------
+
+spamTask <- makeClassifTask(data = spam, target = 'type')
+svmLearner <- makeLearner('classif.svm', kernel = 'linear')
+svm_trained <- train(svmLearner, spamTask)
+
+# performance -------------------------------------------------------------
+
+p <- predict(svm_trained, newdata = spam)
+calculateConfusionMatrix(p)
+calculateROCMeasures(p)
