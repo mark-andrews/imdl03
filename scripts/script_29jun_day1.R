@@ -17,3 +17,20 @@ training_df <- affairs_df %>%
   # convert to base R data frame
   as.data.frame()
   
+
+# Make "task" and "learner" -----------------------------------------------
+
+affairsTask <- makeClassifTask(data = training_df,
+                               target = 'affair')
+
+logReg <- makeLearner("classif.logreg", predict.type = 'prob')
+
+# train it
+logReg_trained <- train(logReg, affairsTask)
+
+
+# Evaluate performance ----------------------------------------------------
+
+p <- predict(logReg_trained, newdata = training_df)
+calculateConfusionMatrix(p)
+calculateROCMeasures(p)
