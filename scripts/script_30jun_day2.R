@@ -109,3 +109,32 @@ rforest_tune <- tuneParams(rforest,
                            resampling = kfold_cv,
                            par.set = rforest_param,
                            control = rand_search)
+
+rforest_tune$x
+
+rforest2 <- setHyperPars(rforest, par.vals = rforest_tune$x)
+
+# cross validate it
+rforest2_cv <- resample(rforest2,
+                        task = ZooTask,
+                        resampling = kfold_cv,
+                        measures = list(acc, mmce))
+rforest2_cv$aggr
+
+
+
+# Load Keras library ------------------------------------------------------
+
+library(keras)
+mnist <- dataset_mnist()
+
+dim(mnist$train$x)
+dim(mnist$test$x)
+
+mnist$train$y
+
+
+x_train <- array_reshape(mnist$train$x, 
+                         c(nrow(mnist$train$x), 28 ^ 2))
+x_test <- array_reshape(mnist$test$x, 
+                         c(nrow(mnist$test$x), 28 ^ 2))
