@@ -70,6 +70,39 @@ dtree2_trained <- train(dtree2, ZooTask)
 dtree2_trained_m <- getLearnerModel(dtree2_trained)
 rpart.plot(dtree2_trained_m)
 
+# Grid search -------------------------------------------------------------
+
+space1 <- makeParamSet(
+  makeDiscreteParam('minsplit', values = c(3, 5, 10, 15)),
+  makeDiscreteParam('minbucket', values = c(5, 10, 15, 20)),
+  makeDiscreteParam('cp', values = c(0.001, 0.01, 0.1, 0.5))
+)
+
+grid1 <- makeTuneControlGrid()
+
+dtree_tune <- tuneParams(dtree,
+                         task = ZooTask,
+                         resampling = kfold_cv,
+                         par.set = space1,
+                         control = grid1)
+dtree_tune$x
+
+
+space2 <- makeParamSet(
+  makeIntegerParam('minsplit', lower = 3, upper = 20),
+  makeIntegerParam('minbucket', lower = 3, upper = 20),
+  makeNumericParam('cp', lower = 0.001, upper = 0.5)
+)
+
+grid2 <- makeTuneControlGrid(resolution = 5)
+
+dtree_tune <- tuneParams(dtree,
+                         task = ZooTask,
+                         resampling = kfold_cv,
+                         par.set = space2,
+                         control = grid2)
+dtree_tune$x
+
 
 # bootstrapping
 x <- rnorm(10)
@@ -138,3 +171,9 @@ x_train <- array_reshape(mnist$train$x,
                          c(nrow(mnist$train$x), 28 ^ 2))
 x_test <- array_reshape(mnist$test$x, 
                          c(nrow(mnist$test$x), 28 ^ 2))
+
+x_train <- x_train /255
+x_test <- x_test/255
+
+y_train <- to_categorical(mnist$train$y, 10)
+y_test <- to_categorical(mnist$test$y, 10)
