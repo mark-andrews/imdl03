@@ -69,3 +69,19 @@ dtree2_cv$aggr
 dtree2_trained <- train(dtree2, ZooTask)
 dtree2_trained_m <- getLearnerModel(dtree2_trained)
 rpart.plot(dtree2_trained_m)
+
+
+# bootstrapping
+x <- rnorm(10)
+sample(x, size = length(x), replace = TRUE)
+
+
+
+# Random forest -----------------------------------------------------------
+
+rforest <- makeLearner('classif.randomForest')
+rforest_trained_1 <- train(rforest, ZooTask)
+
+p4 <- predict(rforest_trained_1, newdata = Zoo) # overfitting!
+performance(p4, measures = list(acc, mmce))
+calculateConfusionMatrix(p4)
