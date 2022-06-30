@@ -182,3 +182,32 @@ spamCV <- resample(learner = svmLearner,
                  measures = list(acc, mmce, tpr, ppv, f1))
 
 spamCV$aggr
+
+# Optimize settings -------------------------------------------------------
+
+
+getParamSet(svmLearner)
+
+svm_param_space <- makeParamSet(
+  makeNumericParam('cost', lower = 0.1, upper = 10),
+  makeNumericParam('gamma', lower = 0.1, upper = 10)
+)
+
+randSearch <- makeTuneControlRandom(maxit = 25)
+
+svm_tuned <- tuneParams('classif.svm',
+                        task = spamTask,
+                        resampling = makeResampleDesc('Holdout', split = 0.75),
+                        par.set = svm_param_space,
+                        control = randSearch)
+
+svm_tuned$x
+
+svmLearner_tuned <- setHyperPars(makeLearner('classif.svm'),
+                                 par.vals = svm_tuned$x)
+
+svmLearner_tuned_trained <- train(svmLearner_tuned, spamTask)
+
+p1 <- predict(svmLearner_tuned_trained, newdata = spam)
+calculateConfusionMatrix(p1)
+calculateROCMeasures(p1)
