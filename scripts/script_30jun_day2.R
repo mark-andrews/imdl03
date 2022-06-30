@@ -204,6 +204,6 @@ nn_model %>%
 nn_model %>% 
   fit(x_train,
       y_train,
-      epoch = 25,
-      batch = 100,
+      epochs = 25,
+      batch_size = 100,
       validation_split = 0.2)
