@@ -177,3 +177,33 @@ x_test <- x_test/255
 
 y_train <- to_categorical(mnist$train$y, 10)
 y_test <- to_categorical(mnist$test$y, 10)
+
+
+# Define our model --------------------------------------------------------
+
+nn_model <- keras_model_sequential()
+
+nn_model %>% 
+  layer_dense(input_shape = 28 ^ 2, units = 256, activation = 'relu') %>%
+  layer_dropout(rate = 0.4) %>% 
+  layer_dense(units = 128, activation = 'relu') %>% 
+  layer_dropout(rate = 0.4) %>%
+  layer_dense(units = 10, activation = 'softmax')
+
+# these kinds of operations are happening in input layer to hidden layer
+# W <- matrix(rnorm(784 * 256), nrow = 256, ncol = 784) # random weights
+# W %*% input_1
+
+summary(nn_model)
+
+nn_model %>% 
+  compile(loss = 'categorical_crossentropy',
+          optimizer = optimizer_rmsprop(),
+          metrics = 'accuracy')
+
+nn_model %>% 
+  fit(x_train,
+      y_train,
+      epoch = 25,
+      batch = 100,
+      validation_split = 0.2)
