@@ -222,8 +222,17 @@ plot(cifar$train$x[10101,,,] %>% as.raster(max = 255)) #car
 
 
 convnet <- keras_model_sequential()
-convnet %>% layer_conv_2d(input_shape = c(32, 32, 3),
-                          activation = 'relu',
-                          filters = 32, 
-                          kernel_size = c(3, 3))
+convnet %>% 
+  layer_conv_2d(input_shape = c(32, 32, 3),
+                activation = 'relu',
+                filters = 32, 
+                kernel_size = c(3, 3)) %>%
+  layer_max_pooling_2d(pool_size = c(2,2)) %>%
+  layer_conv_2d(filters = 64,
+                kernel_size = c(3, 3),
+                activation = 'relu') %>% 
+  layer_max_pooling_2d(pool_size = c(2,2)) %>%
+  
+  
+  
   
