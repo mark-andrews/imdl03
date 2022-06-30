@@ -54,3 +54,4 @@ dtree_tune <- tuneParams(dtree,
                          resampling = kfold_cv,
                          par.set = dtree_param_space,
                          control = rand_search)
+dtree_tune$x
