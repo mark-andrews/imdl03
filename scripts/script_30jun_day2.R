@@ -55,3 +55,17 @@ dtree_tune <- tuneParams(dtree,
                          par.set = dtree_param_space,
                          control = rand_search)
 dtree_tune$x
+
+dtree2 <- setHyperPars(dtree, par.vals = dtree_tune$x)
+
+# evaluate it
+dtree2_cv <- resample(dtree2,
+                      task = ZooTask,
+                      resampling = kfold_cv,
+                      measures = list(acc, mmce))
+dtree2_cv$aggr
+
+
+dtree2_trained <- train(dtree2, ZooTask)
+dtree2_trained_m <- getLearnerModel(dtree2_trained)
+rpart.plot(dtree2_trained_m)
