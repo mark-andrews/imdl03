@@ -92,3 +92,20 @@ rforest_cv <- resample(rforest,
                        resampling = kfold_cv,
                        measures = list(acc, mmce))
 
+rforest_cv$aggr
+
+getParamSet(rforest)
+
+rforest_param <- makeParamSet(
+  makeIntegerParam('ntree', lower = 250, upper = 750),
+  makeIntegerParam('nodesize', lower = 2, upper = 10),
+  makeIntegerParam('maxnodes', lower = 5, upper = 10)
+)
+
+rand_search <- makeTuneControlRandom(maxit = 250)
+
+rforest_tune <- tuneParams(rforest,
+                           task = ZooTask,
+                           resampling = kfold_cv,
+                           par.set = rforest_param,
+                           control = rand_search)
