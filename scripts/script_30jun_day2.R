@@ -85,3 +85,10 @@ rforest_trained_1 <- train(rforest, ZooTask)
 p4 <- predict(rforest_trained_1, newdata = Zoo) # overfitting!
 performance(p4, measures = list(acc, mmce))
 calculateConfusionMatrix(p4)
+
+# cross validate it
+rforest_cv <- resample(rforest,
+                       task = ZooTask,
+                       resampling = kfold_cv,
+                       measures = list(acc, mmce))
+
