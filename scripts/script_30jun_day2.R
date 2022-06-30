@@ -237,4 +237,17 @@ convnet %>%
   layer_dense(units = 10, activation = 'softmax')
   
   
+convnet %>% 
+  compile(
+    optimizer = optimizer_rmsprop(),
+    metrics = 'accuracy',
+    loss = 'sparse_categorical_crossentropy')
+
+
+convnet %>% 
+  fit(x = cifar$train$x,
+      y = cifar$train$y,
+      epochs = 10,
+      validation_data = cifar$test)
   
+keras::evaluate(convnet, cifar$test$x, cifar$test$y)
