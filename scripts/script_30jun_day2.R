@@ -207,3 +207,23 @@ nn_model %>%
       epochs = 25,
       batch_size = 100,
       validation_split = 0.2)
+
+nn_model %>% keras::evaluate(x_test, y_test)
+nn_model %>% predict(x_test) %>% head()
+
+# Conv nets ---------------------------------------------------------------
+
+cifar <- dataset_cifar10()
+dim(cifar$train$x)
+plot(cifar$train$x[1,,,] %>% as.raster(max = 255)) # frog
+plot(cifar$train$x[2675,,,] %>% as.raster(max = 255)) # frog
+plot(cifar$train$x[61,,,] %>% as.raster(max = 255)) # truck
+plot(cifar$train$x[10101,,,] %>% as.raster(max = 255)) #car
+
+
+convnet <- keras_model_sequential()
+convnet %>% layer_conv_2d(input_shape = c(32, 32, 3),
+                          activation = 'relu',
+                          filters = 32, 
+                          kernel_size = c(3, 3))
+  
