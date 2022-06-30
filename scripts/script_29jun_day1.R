@@ -211,3 +211,9 @@ svmLearner_tuned_trained <- train(svmLearner_tuned, spamTask)
 p1 <- predict(svmLearner_tuned_trained, newdata = spam)
 calculateConfusionMatrix(p1)
 calculateROCMeasures(p1)
+
+# CV evaluation
+spamCV2 <- resample(learner = svmLearner_tuned,
+                   task = spamTask,
+                   resampling = kfold_cv,
+                   measures = list(acc, mmce, tpr, ppv, f1))
